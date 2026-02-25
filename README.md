@@ -25,4 +25,3 @@ Bu proje, ben ve kız arkadaşım için günlük namaz alışkanlıklarımızı 
 ## 📦 Deployment
 
 Bu proje Vercel üzerinde host edilmek üzere yapılandırılmıştır. GitHub reposunu Vercel'e bağlayarak tek tıkla canlıya alabilirsiniz.
-# namaz-takip
