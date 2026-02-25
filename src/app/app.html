@@ -144,56 +144,41 @@
     <div class="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-8 mt-4">
 
       <div
-        class="md:col-span-2 bg-white/80 backdrop-blur-xl rounded-[2.5rem] p-8 shadow-lg border border-white/50 flex flex-col justify-center">
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="text-2xl font-bold text-slate-800">Haftalık Seri 🗓️</h3>
-          <span
-            class="px-4 py-2 bg-amber-100 text-amber-700 rounded-full font-bold text-sm shadow-sm flex items-center gap-2">
+        class="col-span-1 md:col-span-2 bg-white/80 backdrop-blur-xl rounded-[2.5rem] p-8 shadow-lg border border-white/50">
+        <div class="flex items-center justify-between mb-8">
+          <h3 class="text-2xl font-bold text-slate-800 flex items-center gap-3">
+            Haftalık Seri 🗓️
+          </h3>
+          <span class="px-4 py-2 bg-amber-100 text-amber-700 rounded-full font-bold text-sm shadow-sm">
             🔥 {{ streakCount }} Günlük Seri
           </span>
         </div>
+
         <div class="flex justify-between items-center gap-2 overflow-x-auto pb-2">
-          <div class="flex flex-col items-center gap-3 min-w-[3rem]"><span
-              class="text-sm font-semibold text-slate-400">Pzt</span>
+          @for (day of daysOfWeek; track $index) {
+          <div class="flex flex-col items-center gap-3 min-w-[3.5rem]">
+            <span class="text-xs font-semibold"
+              [ngClass]="$index === todayIndex ? 'text-emerald-600 font-bold' : 'text-slate-400'">
+              {{day}}
+            </span>
+
+            @if (getDayStatus($index) === 'completed') {
             <div
-              class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-300 to-orange-400 text-white flex items-center justify-center">
+              class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 text-white flex items-center justify-center shadow-md">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
               </svg>
             </div>
-          </div>
-          <div class="flex flex-col items-center gap-3 min-w-[3rem]"><span
-              class="text-sm font-semibold text-slate-400">Sal</span>
+            } @else if (getDayStatus($index) === 'partial') {
             <div
-              class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-300 to-orange-400 text-white flex items-center justify-center">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-              </svg>
-            </div>
-          </div>
-          <div class="flex flex-col items-center gap-3 min-w-[3rem] relative"><span
-              class="text-sm font-bold text-slate-800">Çar</span>
-            <div
-              class="w-14 h-14 rounded-2xl border-[3px] border-amber-400 bg-amber-50 flex items-center justify-center">
+              class="w-12 h-12 rounded-2xl border-[3px] border-amber-400 bg-amber-50 flex items-center justify-center">
               <span class="w-3 h-3 bg-amber-400 rounded-full animate-pulse"></span>
             </div>
+            } @else {
+            <div class="w-12 h-12 rounded-2xl bg-slate-100 border-2 border-slate-200 opacity-50"></div>
+            }
           </div>
-          <div class="flex flex-col items-center gap-3 min-w-[3rem]"><span
-              class="text-sm font-semibold text-slate-400">Per</span>
-            <div class="w-12 h-12 rounded-2xl bg-slate-100 border-2 border-slate-200"></div>
-          </div>
-          <div class="flex flex-col items-center gap-3 min-w-[3rem]"><span
-              class="text-sm font-semibold text-slate-400">Cum</span>
-            <div class="w-12 h-12 rounded-2xl bg-slate-100 border-2 border-slate-200"></div>
-          </div>
-          <div class="flex flex-col items-center gap-3 min-w-[3rem]"><span
-              class="text-sm font-semibold text-slate-400">Cmt</span>
-            <div class="w-12 h-12 rounded-2xl bg-slate-100 border-2 border-slate-200"></div>
-          </div>
-          <div class="flex flex-col items-center gap-3 min-w-[3rem]"><span
-              class="text-sm font-semibold text-slate-400">Paz</span>
-            <div class="w-12 h-12 rounded-2xl bg-slate-100 border-2 border-slate-200"></div>
-          </div>
+          }
         </div>
       </div>
 

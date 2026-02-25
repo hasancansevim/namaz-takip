@@ -11,8 +11,12 @@ import { PrayerService } from './prayer.service';
 })
 export class AppComponent implements OnInit {
   private prayerService = inject(PrayerService);
+
   streakCount: number = 0;
-  lastSevenDays: any[] = [];
+  daysOfWeek = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+  historyData: any = {};
+  todayIndex: number = 0; // Bugünün hangi günde olduğunu burada tutacağız
+
   prayers = [
     { name: 'Sabah', icon: '🌅' },
     { name: 'Öğle', icon: '☀️' },
@@ -37,16 +41,20 @@ export class AppComponent implements OnInit {
   };
 
   ngOnInit() {
+    // Bugünün index'ini hesapla (Pzt: 0, Paz: 6)
+    const now = new Date();
+    this.todayIndex = now.getDay() === 0 ? 6 : now.getDay() - 1;
+
     this.prayerService.initializeTodayIfEmpty().then(() => {
       this.prayerService.getTodayProgress().subscribe((data) => {
         if (data) {
           this.asli = data.asli || this.asli;
           this.hasanCan = data.hasanCan || this.hasanCan;
+          // Her güncellemede seriyi tekrar hesapla
+          this.calculateStreak();
         }
       });
     });
-
-    this.calculateStreak();
   }
 
   getScore(progress: { [key: string]: boolean }): number {
@@ -55,33 +63,53 @@ export class AppComponent implements OnInit {
 
   getCircleProgress(progress: { [key: string]: boolean }): string {
     const score = this.getScore(progress);
-    const percentage = score / 5;
-    const filledPart = percentage * 226;
+    const filledPart = (score / 5) * 226;
     return `${filledPart} 226`;
   }
 
   togglePrayer(user: 'asli' | 'hasanCan', prayerName: string) {
     const currentValue = user === 'asli' ? this.asli[prayerName] : this.hasanCan[prayerName];
-    const newValue = !currentValue;
-    this.prayerService.updatePrayer(user, prayerName, newValue);
+    this.prayerService.updatePrayer(user, prayerName, !currentValue);
   }
 
   async calculateStreak() {
-    const history = await this.prayerService.getRecentHistory(7);
-    const dates = Object.keys(history).sort().reverse();
+    this.historyData = await this.prayerService.getRecentHistory(7);
+    const dates = Object.keys(this.historyData).sort().reverse();
 
     let count = 0;
     for (const date of dates) {
-      const dayData = history[date];
-      const asliScore = Object.values(dayData.asli || {}).filter((v) => v).length;
-      const hasanScore = Object.values(dayData.hasanCan || {}).filter((v) => v).length;
+      const dayData = this.historyData[date];
+      // Skor hesaplarken tipleri garantiye alıyoruz
+      const asliScore = Object.values(dayData.asli || {}).filter((v) => v === true).length;
+      const hasanScore = Object.values(dayData.hasanCan || {}).filter((v) => v === true).length;
 
       if (asliScore === 5 && hasanScore === 5) {
         count++;
       } else {
-        break; // Seri bozulduysa dur
+        // Eğer kontrol edilen gün "bugün" ise ve henüz tamamlanmadıysa seriyi bozma
+        const todayStr = new Date().toISOString().split('T')[0];
+        if (date === todayStr) continue;
+        break;
       }
     }
     this.streakCount = count;
+  }
+
+  getDayStatus(dayIndex: number): 'completed' | 'partial' | 'empty' {
+    if (dayIndex > this.todayIndex) return 'empty';
+
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() - (this.todayIndex - dayIndex));
+    const dateStr = targetDate.toISOString().split('T')[0];
+
+    const dayData = this.historyData[dateStr];
+    if (!dayData) return 'empty';
+
+    const asliScore = Object.values(dayData.asli || {}).filter((v) => v === true).length;
+    const hasanScore = Object.values(dayData.hasanCan || {}).filter((v) => v === true).length;
+
+    if (asliScore === 5 && hasanScore === 5) return 'completed';
+    if (asliScore > 0 || hasanScore > 0) return 'partial';
+    return 'empty';
   }
 }
