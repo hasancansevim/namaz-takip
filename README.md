@@ -1,59 +1,28 @@
-# NamazTracker
+# 🌙 Namaz Tracker
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.7.
+Bu proje, ben ve kız arkadaşım için günlük namaz alışkanlıklarımızı birlikte takip edebilmelmemiz için geliştirilmiş, gerçek zamanlı senkronizasyon özelliğine sahip şık bir web uygulamasıdır.
 
-## Development server
+## ✨ Özellikler
 
-To start a local development server, run:
+- **Gerçek Zamanlı Takip:** Firebase Firestore ile bir cihazda yapılan değişiklik anında diğerinde görünür.
+- **Modern UI:** Tailwind CSS ve Angular kullanılarak hazırlanan premium, göz yormayan tasarım.
+- **Otomatik Sıfırlama:** Her gün gece yarısından sonra sistem kendini yeni bir güne hazırlar.
+- **Haftalık Seri:** Alışkanlık takibini motive eden haftalık takvim görünümü.
 
-```bash
-ng serve
-```
+## 🛠️ Teknolojiler
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- **Framework:** [Angular 17+](https://angular.io/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Database:** [Firebase Firestore](https://firebase.google.com/)
+- **Hosting:** [Vercel](https://vercel.com/)
 
-## Code scaffolding
+## 🚀 Başlangıç
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+1. Projeyi klonlayın: `git clone <repo-url>`
+2. Paketleri yükleyin: `npm install`
+3. Projeyi çalıştırın: `ng serve`
 
-```bash
-ng generate component component-name
-```
+## 📦 Deployment
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Bu proje Vercel üzerinde host edilmek üzere yapılandırılmıştır. GitHub reposunu Vercel'e bağlayarak tek tıkla canlıya alabilirsiniz.
+# namaz-takip
