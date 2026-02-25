@@ -11,7 +11,8 @@ import { PrayerService } from './prayer.service';
 })
 export class AppComponent implements OnInit {
   private prayerService = inject(PrayerService);
-
+  streakCount: number = 0;
+  lastSevenDays: any[] = [];
   prayers = [
     { name: 'Sabah', icon: '🌅' },
     { name: 'Öğle', icon: '☀️' },
@@ -36,17 +37,16 @@ export class AppComponent implements OnInit {
   };
 
   ngOnInit() {
-    // 1. Önce veritabanında bugünün sayfası var mı kontrol et, yoksa tertemiz sayfa aç
     this.prayerService.initializeTodayIfEmpty().then(() => {
-      // 2. Ardından Firebase'den gelen anlık verileri dinlemeye başla
       this.prayerService.getTodayProgress().subscribe((data) => {
         if (data) {
-          // Aslı veya sen tıkladığında bu kod anında diğer telefonun ekranını güncelleyecek
           this.asli = data.asli || this.asli;
           this.hasanCan = data.hasanCan || this.hasanCan;
         }
       });
     });
+
+    this.calculateStreak();
   }
 
   getScore(progress: { [key: string]: boolean }): number {
@@ -61,11 +61,27 @@ export class AppComponent implements OnInit {
   }
 
   togglePrayer(user: 'asli' | 'hasanCan', prayerName: string) {
-    // Tıklandığı an gecikme hissi olmaması için önce ekranda rengi değiştiriyoruz
     const currentValue = user === 'asli' ? this.asli[prayerName] : this.hasanCan[prayerName];
     const newValue = !currentValue;
-
-    // Ardından Firebase'e fırlatıyoruz!
     this.prayerService.updatePrayer(user, prayerName, newValue);
+  }
+
+  async calculateStreak() {
+    const history = await this.prayerService.getRecentHistory(7);
+    const dates = Object.keys(history).sort().reverse();
+
+    let count = 0;
+    for (const date of dates) {
+      const dayData = history[date];
+      const asliScore = Object.values(dayData.asli || {}).filter((v) => v).length;
+      const hasanScore = Object.values(dayData.hasanCan || {}).filter((v) => v).length;
+
+      if (asliScore === 5 && hasanScore === 5) {
+        count++;
+      } else {
+        break; // Seri bozulduysa dur
+      }
+    }
+    this.streakCount = count;
   }
 }

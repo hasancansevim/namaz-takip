@@ -1,5 +1,17 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, doc, docData, setDoc, updateDoc, getDoc } from '@angular/fire/firestore';
+import {
+  Firestore,
+  doc,
+  docData,
+  setDoc,
+  updateDoc,
+  getDoc,
+  collection,
+  query,
+  getDocs,
+  limit,
+  orderBy,
+} from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 export interface DailyProgress {
@@ -55,5 +67,18 @@ export class PrayerService {
     await updateDoc(docRef, {
       [`${user}.${prayerName}`]: value,
     });
+  }
+
+  async getRecentHistory(days: number = 7) {
+    const prayersCol = collection(this.firestore, 'prayers');
+    // Tarihe göre sıralayıp son 'days' kadar kaydı getiriyoruz
+    const q = query(prayersCol, orderBy('__name__', 'desc'), limit(days));
+    const querySnapshot = await getDocs(q);
+
+    const history: { [date: string]: any } = {};
+    querySnapshot.forEach((doc) => {
+      history[doc.id] = doc.data();
+    });
+    return history;
   }
 }
